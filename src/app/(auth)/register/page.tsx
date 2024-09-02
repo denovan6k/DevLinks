@@ -65,10 +65,10 @@ export default function Register() {
 
     try {
       await createUserWithEmailAndPassword(getAuth(app), form.emailAddress, form.password);
-      router.push("/auth/login");
+      router.push("/login");
       toast({      
         action: (
-          <div className="w- flex items-center">
+          <div className="max-w-[300px] flex justify-center items-center">
             <Icon icon='ph:seal-check' className="mr-2 text-green-600" />
             <span className="first-letter:capitalize">
               Created Account successfully

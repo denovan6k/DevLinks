@@ -19,6 +19,7 @@ const fontSans = FontSans({
 export const metadata: Metadata = {
   title: "Devlinks",
   description: "Innovation through sharing",
+  
 };
 
 export default function RootLayout({
@@ -37,8 +38,9 @@ export default function RootLayout({
              
              
              {children}
+             <div className="">
              <Toaster/>
-            
+             </div>
              
          
           </DropdownProvider>
