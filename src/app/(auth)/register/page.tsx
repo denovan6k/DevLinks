@@ -186,7 +186,7 @@ export default function Register() {
       <div className="flex flex-col justify-center items-center">
         <div className="flex flex-col tl:flex-row tl:space-x-2 text-[16px]  justify-center items-center">
         <p className="text-[#737373]"> Already have an account?</p>
-        <Link href='/auth/login'>
+        <Link href='/login'>
         <p className="text-[#633CFF]"> Login </p>
         </Link>
         </div>
