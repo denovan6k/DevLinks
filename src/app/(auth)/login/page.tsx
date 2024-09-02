@@ -128,7 +128,7 @@ export default function Login() {
           <div className="flex flex-col justify-center items-center">
         <div className="flex flex-col tl:flex-row tl:space-x-2 text-[16px]  justify-center items-center">
         <p className='text-[#737373]' > Don’t have an account?</p>
-        <Link href='/auth/register'>
+        <Link href='/register'>
         <p className="text-[#633CFF]"> Create account </p>
         </Link>
         </div>
