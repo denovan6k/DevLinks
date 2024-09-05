@@ -21,9 +21,12 @@ import {
   SelectItem,
   Select,
 } from "@/components/ui/select";
-import { collection, addDoc,doc, updateDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc,doc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import db from "@/lib/firestore";
 import { useRouter } from "next/navigation";
+import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "firebase/storage";
+import {  getMetadata } from 'firebase/storage';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 type Item = {
     id: string;
     color?: string;
@@ -52,17 +55,45 @@ const formSchema = z
 
 export default function EditForm() {
     const [forms, setForm] = useState<Item[]>([]);
+    const [userId, setUserId] = useState<string | null>(null); 
+    const [user, setUser] = useState<any>(null);
+    const auth = getAuth();
     const router = useRouter();
+
     useEffect(() => {
-        const fetchItems = async () => {
-          const querySnapshot = await getDocs(collection(db, "form"));
-          setForm(querySnapshot.docs.map((doc:any) => ({ ...doc.data(), id: doc.id } as Item)));
-        };
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUserId(user.uid);
+          
+          fetchItems(user.uid);
+        } else {
+          setUserId(null);
+        } 
     
-        fetchItems();
-      }, []);
+      })
+      return () => unsubscribe();
+    },[auth])
 
-
+    const fetchItems = async (userId: string) => {
+      try {
+        
+    
+        // Fetch user-specific documents from Firestore (items and form collections)
+        const [ formSnapshot] = await Promise.all([
+           // Fetch items where userId matches the current user's UID
+          getDocs(collection(db, `users/${userId}/forms`)), // Fetch form data for the user
+        ]);
+    
+        // Optional delay for loading simulation
+        // const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+        // await delay(1000);
+    
+      
+        setForm(formSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } 
+    };
 
 
 
@@ -80,44 +111,35 @@ export default function EditForm() {
  
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-
-    for (const form of forms) {
-    //   if (!form.firstName || !form.lastName || !form.emailAddress) {
-    //     console.error("All form fields must be filled out:", form);
-    //     alert("Please fill out all form fields before saving.");
-    //     return;
-    //   }
-
-      try {
-        if (form.id) {
-          // Update existing document
-          const docRef = doc(db, "form", form.id);
-          await updateDoc(docRef, {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            emailAddress: values.emailAddress,
-            
-          });
-          router.push("/preview");
-          console.log("Document updated with ID: ", form.id);
-        } else {
-          // Add new document
-          const docRef = await addDoc(collection(db, "form"), {
-            platform: form.platform,
-            link: form.link,
-            icon: form.icon,
-            color: form.color,
-          });
-         
-          console.log("Document written with ID: ", docRef.id);
-        }
-
-      } catch (e) {
-        console.error("Error saving document: ", e);
-      }
+    if (!userId) {
+      alert("User not authenticated");
+      return;
     }
 
-    
+    try {
+      if (forms.length > 0 && forms[0]?.id) {
+        // Update existing document under `users/{userId}/forms/{formId}`
+        const docRef = doc(db, `users/${userId}/forms`, forms[0]?.id); // Reference to form
+        await updateDoc(docRef, {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          emailAddress: values.emailAddress,
+        });
+        console.log("Document updated with ID: ", forms[0]?.id);
+      } else {
+        // Add new document to `users/{userId}/forms`
+        const docRef = await addDoc(collection(db, `users/${userId}/forms`), {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          emailAddress: values.emailAddress,
+        });
+        console.log("New form added with ID: ", docRef.id);
+      }
+
+      router.push("/preview");
+    } catch (e) {
+      console.error("Error saving document: ", e);
+    }
   };
 
   return (
@@ -140,7 +162,7 @@ export default function EditForm() {
                   <div className="tl:flex tl:items-center tl:justify-between">
                   <FormLabel>First name*</FormLabel>
                   <FormControl>
-                    <Input placeholder= {` ${forms[0]?.firstName}`} type="text" {...field} className="tl:w-[344px]" />
+                    <Input placeholder= {forms[0]?.firstName || 'john'} type="text" {...field} className="tl:w-[344px]" />
                   </FormControl>
                   </div>            
                   <FormMessage />
@@ -158,8 +180,8 @@ export default function EditForm() {
                   <FormLabel>Last name*</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder= {` ${forms[0]?.lastName}`}
-                      type="password"
+                      placeholder= {forms[0]?.lastName || 'doe'}
+                      type="text"
                       {...field}
                       className="tl:w-[344px]" />
                   </FormControl>
@@ -179,7 +201,7 @@ export default function EditForm() {
                   <FormLabel>Email address</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder= {` ${forms[0]?.emailAddress}`}
+                      placeholder= {forms[0]?.emailAddress || "johndoe@gmail.com"}
                       type="email"
                       {...field}
                       className="tl:w-[344px]" />

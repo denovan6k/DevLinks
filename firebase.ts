@@ -7,4 +7,4 @@ import { getAuth } from 'firebase/auth';
 export const app = initializeApp(clientConfig);
 export const imagedb = getStorage(app);
 export const db = getFirestore(app);
-const auth = getAuth(app);
+export const auth = getAuth(app);

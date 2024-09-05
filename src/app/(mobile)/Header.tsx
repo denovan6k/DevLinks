@@ -120,6 +120,3 @@ const Header = () => {
 
 export default Header
 
-{/* <Button className={`rounded-lg ${getButtonClass('/')}`}> */}
-{/* <Button className={`rounded-lg ${getButtonClass('/')}`}></Button> */}
-{/* <Button className={`rounded-lg ${getButtonClass('/')}`}></Button> */}

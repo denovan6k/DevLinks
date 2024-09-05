@@ -7,12 +7,13 @@ import Image from 'next/image'
 import img1 from  './Ellipse.png'
 import user from '../(mobile)/linkdata/data'
 import db from "../../lib/firestore"
-import { collection, getDocs } from "firebase/firestore"
+import { collection, getDocs,query, where } from "firebase/firestore"
 import Loading from './Load'
 import Link from 'next/link'
 import { imagedb } from '../../../firebase'
 import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "firebase/storage";
-
+import {  getMetadata } from 'firebase/storage';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 interface props{
   className?:string
 }
@@ -24,6 +25,7 @@ type Item = {
   color?: string;
   icon: string;
   platform?: string;
+  link?: string;
   [key: string]: any;
 };
 
@@ -31,52 +33,71 @@ const Preview = ({ className }: props) => {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<Item[]>([]);
   const [items, setItems] = useState<Item[]>([]);
-  const [imgUrls, setImgUrls] = useState<string[]>([]);
-  const imagesListRef = ref(imagedb, "uploads/");
+  const [imgUrl, setImgUrl] = useState<string >(''); // Store one image URL
+  const [userId, setUserId] = useState<string | null>(null); // Track the authenticated user's UID
+  const auth = getAuth();
   
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setUserId(user.uid);
+      fetchImages(user.uid)
+      fetchItems(user.uid);
+    } else {
+      setUserId(null);
+    } 
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        setLoading(true);
+  })
+  return () => unsubscribe();
+},[auth])
 
-        const [itemsSnapshot, formSnapshot] = await Promise.all([
-          getDocs(collection(db, "items")),
-          getDocs(collection(db, "form")),
-        ]);
+const fetchImages = async (userId: string) => {
+  try {
+    // Fetch images from Firebase Storage for the specific user (assuming images are stored under uploads/{userId}/)
+    const imagesListRef = ref(imagedb, `images/${userId}`); // User-specific image directory
+    const response = await listAll(imagesListRef);
 
-        listAll(imagesListRef).then((response) => {
-          const urls: string[] = [];
-          response.items.forEach((item) => {
-            getDownloadURL(item).then((url) => {
-              urls.push(url);
-              if (urls.length === response.items.length) {
-                setImgUrls(urls);
-              }
-            });
-          });
-        })
+    // Fetch image URLs and metadata
+    const urlsWithMetadata = await Promise.all(
+      response.items.map(async (item) => {
+        const url = await getDownloadURL(item);
+        const metadata = await getMetadata(item); // Get metadata including timeCreated
+        return { url, timeCreated: metadata.timeCreated };
+      })
+    );
+
+    // Sort images by upload time (most recent first) and set the latest image URL
+    urlsWithMetadata.sort((a, b) => new Date(b.timeCreated).getTime() - new Date(a.timeCreated).getTime());
+    setImgUrl(urlsWithMetadata[0]?.url); // Set the most recent image or fallback to default image
+  } catch (error) {
+    console.error('Error fetching images:', error);
+  }
+};
 
 
+const fetchItems = async (userId: string) => {
+  try {
+    setLoading(true);
 
+    // Fetch user-specific documents from Firestore (items and form collections)
+    const [itemsSnapshot, formSnapshot] = await Promise.all([
+      getDocs(collection(db, `users/${userId}/items`)), // Fetch items where userId matches the current user's UID
+      getDocs(collection(db, `users/${userId}/forms`)), // Fetch form data for the user
+    ]);
 
-        // Optional delay
-        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        await delay(3000);
+    // Optional delay for loading simulation
+    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    await delay(1000);
 
-        // Update state with fetched data
-        setItems(itemsSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Item)));
-        setForm(formSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Item)));
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);  // Ensure loading is set to false even if there's an error
-      }
-    };
+    setItems(itemsSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+    setForm(formSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setLoading(false); // Ensure loading is stopped
+  }
+};
 
-    fetchItems();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
  
   
   if (loading) {
@@ -102,8 +123,8 @@ const Preview = ({ className }: props) => {
        <div className='min-w-[237px] flex flex-col items-center mt-[56px] border p-[20px] rounded-2xl shadow-lg shadow-purple-200'>
        <div className="relative w-32 h-32">
       <Image
-        src={imgUrls[0]}
-        alt="Profile Picture"
+        src={imgUrl}
+        alt=""
         layout="fill"
         objectFit="cover"
         className="rounded-full border-4 border-[#633CFF]" // Apply circular border
@@ -115,7 +136,7 @@ const Preview = ({ className }: props) => {
                </div>
                <div className='mt-[56px]'>
                {items.map((option, index) => (
-                <Link href={option.link} key={index}>
+                <Link href={option.link ||''} key={index}>
 
                     <Button key={index} className= 'min-w-[237px] mb-[20px] flex justify-between p-[16px] ' style={{ backgroundColor: `${option.color}` }}>
                     <div className='flex items-center gap-2'>

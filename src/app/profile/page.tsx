@@ -14,6 +14,9 @@ import {v4} from 'uuid'
 import { useRouter } from 'next/navigation'
 import { url } from 'inspector'
 import MobileLayout from '@/app/MobileLayout'
+
+import {  getMetadata } from 'firebase/storage';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 interface ProfileProps {
   imgUrls?:string
 }
@@ -21,24 +24,49 @@ const Profile = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
-  const [imgUrls, setImgUrls] = useState<string[]>([]);
-  const imagesListRef = ref(imagedb, "uploads/");
+  const [imgUrl, setImgUrl] = useState<string>('');
+  const [userId, setUserId] = useState<string | null>(null); // Track the authenticated user's UID
+  const auth = getAuth();
+  // const imagesListRef = ref(imagedb, "uploads/");
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch all images URLs from Firebase Storage
-    listAll(imagesListRef).then((response) => {
-      const urls: string[] = [];
-      response.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          urls.push(url);
-          if (urls.length === response.items.length) {
-            setImgUrls(urls);
-          }
-        });
-      });
-    });
-  }, []);
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setUserId(user.uid);
+      fetchImages(user.uid)
+      
+    } else {
+      setUserId(null);
+    } 
+
+  })
+  return () => unsubscribe();
+},[auth])
+
+
+const fetchImages = async (userId: string) => {
+  try {
+    // Fetch images from Firebase Storage for the specific user (assuming images are stored under uploads/{userId}/)
+    const imagesListRef = ref(imagedb, `images/${userId}`); // User-specific image directory
+    const response = await listAll(imagesListRef);
+
+    // Fetch image URLs and metadata
+    const urlsWithMetadata = await Promise.all(
+      response.items.map(async (item) => {
+        const url = await getDownloadURL(item);
+        const metadata = await getMetadata(item); // Get metadata including timeCreated
+        return { url, timeCreated: metadata.timeCreated };
+      })
+    );
+
+    // Sort images by upload time (most recent first) and set the latest image URL
+    urlsWithMetadata.sort((a, b) => new Date(b.timeCreated).getTime() - new Date(a.timeCreated).getTime());
+    setImgUrl(urlsWithMetadata[0]?.url); // Set the most recent image or fallback to default image
+  } catch (error) {
+    console.error('Error fetching images:', error);
+  }
+};
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -47,8 +75,8 @@ const Profile = () => {
 
       if (selectedFile) {
         setUploading(true);
-        const newFileName = selectedFile.name + v4();
-        const storageRef = ref(imagedb, `uploads/${newFileName}`);
+        // const newFileName = selectedFile.name + v4();
+        const storageRef = ref(imagedb, `images/${userId}/`);
 
         try {
           // Upload new file
@@ -57,18 +85,19 @@ const Profile = () => {
 
           // Delete old profile picture if any
           if (uploadedUrl) {
-            const oldFileName = uploadedUrl.split('/').pop()?.split('?')[0];
-            const oldFileRef = ref(imagedb, `uploads/${oldFileName}`);
+            // const oldFileName = uploadedUrl.split('/').pop()?.split('?')[0];
+            const oldFileRef = ref(imagedb, `images/${userId}`);
             await deleteObject(oldFileRef);
           }
 
           setUploadedUrl(url);
           console.log("File Uploaded Successfully");
+          router.push("/profile");
         } catch (error) {
           console.error("Error uploading the file", error);
         } finally {
           setUploading(false);
-          router.push("/profile"); // Redirect to preview page after upload
+         // Redirect to preview page after upload
         }
       }
     }
@@ -147,7 +176,7 @@ const Profile = () => {
                         <div className="relative flex justify-center items-center"> 
                           
                         <Image
-                          src={imgUrls[0]} // URL or data URL of the image
+                          src={imgUrl} // URL or data URL of the image
                           alt="" // Add a descriptive alt text
                           className="rounded-xl" // Apply your custom styles
                           width={0} // Width of the image
