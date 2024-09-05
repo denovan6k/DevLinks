@@ -72,8 +72,8 @@ const Header = () => {
         </div>
       </div>
       
-      <header className='tl:hidden flex lp:hidden justify-center p-[24px] '>
-        <ul className='flex justify-between items-center gap-4  '>
+      <header className='tl:hidden flex justify-center lp:hidden  p-[24px] '>
+        <ul className='flex justify-between items-center gap-6 '>
           <Link href='/'>
           <li className={`  flex   tb:items-center`}>
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">

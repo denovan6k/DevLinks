@@ -76,7 +76,7 @@ const fetchImages = async (userId: string) => {
       if (selectedFile) {
         setUploading(true);
         // const newFileName = selectedFile.name + v4();
-        const storageRef = ref(imagedb, `images/${userId}/`);
+        const storageRef = ref(imagedb, `images/${userId}/profile`);
 
         try {
           // Upload new file
@@ -86,13 +86,13 @@ const fetchImages = async (userId: string) => {
           // Delete old profile picture if any
           if (uploadedUrl) {
             // const oldFileName = uploadedUrl.split('/').pop()?.split('?')[0];
-            const oldFileRef = ref(imagedb, `images/${userId}`);
+            const oldFileRef = ref(imagedb, `images/${userId}/profile`);
             await deleteObject(oldFileRef);
           }
 
           setUploadedUrl(url);
           console.log("File Uploaded Successfully");
-          router.push("/profile");
+            router.push("/profile");
         } catch (error) {
           console.error("Error uploading the file", error);
         } finally {

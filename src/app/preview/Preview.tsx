@@ -2,7 +2,7 @@
 import React,{useState,useEffect,useMemo} from 'react'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@iconify/react'
-
+import { useRouter } from "next/navigation";
 import Image from 'next/image'
 import img1 from  './Ellipse.png'
 import user from '../(mobile)/linkdata/data'
@@ -36,7 +36,7 @@ const Preview = ({ className }: props) => {
   const [imgUrl, setImgUrl] = useState<string >(''); // Store one image URL
   const [userId, setUserId] = useState<string | null>(null); // Track the authenticated user's UID
   const auth = getAuth();
-  
+  const router = useRouter();
 useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -54,7 +54,7 @@ useEffect(() => {
 const fetchImages = async (userId: string) => {
   try {
     // Fetch images from Firebase Storage for the specific user (assuming images are stored under uploads/{userId}/)
-    const imagesListRef = ref(imagedb, `images/${userId}`); // User-specific image directory
+    const imagesListRef = ref(imagedb, `images/${userId}/`); // User-specific image directory
     const response = await listAll(imagesListRef);
 
     // Fetch image URLs and metadata
@@ -98,7 +98,13 @@ const fetchItems = async (userId: string) => {
   }
 };
 
- 
+const handleShareProfile = () => {
+  if (userId) {
+    router.push(`/profile/${userId}`); // Redirect to the user's profile page with their userId
+  } else {
+    console.error("No userId found.");
+  }
+};
   
   if (loading) {
     
@@ -109,16 +115,21 @@ const fetchItems = async (userId: string) => {
     
   return (
     <>
-    
+  
+
      <div className='px-[24px] flex flex-col justify-center items-center mx-auto'>
-       <div className='flex items-center py-[16px] gap-[16px]'>
+       <div className='flex items-center py-[16px] gap-[16px] tl:min-w-[600px] lp:min-w-[1000px] tl:justify-between'>
+        <Link href='/'>
           <Button className='max-w-[160px] text-[#633CFF]  border-[#633CFF] rounded-lg'>
             Back to Editor
           </Button>
-          <Button className='max-w-[160px] text-[#FFF] bg-[#633CFF] rounded-lg'>
+          </Link>
+
+          
+          <Button className='max-w-[160px] text-[#FFF] bg-[#633CFF] rounded-lg' onClick={handleShareProfile}>
             Share Link
           </Button>
-          
+       
        </div>
        <div className='min-w-[237px] flex flex-col items-center mt-[56px] border p-[20px] rounded-2xl shadow-lg shadow-purple-200'>
        <div className="relative w-32 h-32">

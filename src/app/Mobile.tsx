@@ -8,12 +8,13 @@ import MobileLayout from './MobileLayout'
 
 const Mobile = () => {
   return (
+    <div className='flex flex-col'>
     <MobileLayout>
-    <>
     
-
-    <div className='flex justify-center lp:max-w-[1440px]'>
-    <div className='flex flex-col p-[24px] justify-center items-center'>
+    
+  <div className='tl:mt-[32px] tl:mb-[10px]'>
+    <div className='flex justify-center'>
+    <div className='flex flex-col justify-center items-center'>
 
     
     {/* <div className=' hidden lp:flex  '>
@@ -60,14 +61,14 @@ const Mobile = () => {
     </div>
 
 
-    <div className='lp:grid lp:grid-cols-3 gap-4'>
+    <div className='lp:grid lp:grid-cols-3'>
       <div className='hidden lp:flex lp:col-span-1 lp:justify-center'> 
       <IphoneFrame />
       </div>
    
     
     
-    <div className='p-[16px] tl:p-[24px] flex flex-col justify-center items-center mx-auto bg-white lp:col-span-2'>
+    <div className=' flex flex-col justify-center items-center mx-auto bg-white lp:col-span-2'>
      
       <main className='p-[24px] tl:p-[40px]  flex flex-col justify-center  items-center'>
         <div className='flex flex-col gap-[8px] min-w-[295px] tl:w-full  text-center tl:text-start tl:items-center'>
@@ -97,9 +98,10 @@ const Mobile = () => {
       </div>
       </div>
 </div>
-
-      </>
+</div>
+      
       </MobileLayout>
+      </div>
   )
 }
 
