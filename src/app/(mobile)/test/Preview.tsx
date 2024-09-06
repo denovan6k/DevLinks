@@ -129,7 +129,7 @@ const fetchItems = async (userId: string) => {
         alt=""
         layout="fill"
         objectFit="cover"
-        className="rounded-full border-4 border-[#633CFF]" // Apply circular border
+        className="rounded-full " // Apply circular border
       />
     </div>
                <div className='flex flex-col justify-center text-center items-center'>

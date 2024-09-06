@@ -57,7 +57,7 @@ export default function Login() {
     }
   }
   return (
-    <div className="p-[32px] tl:p-[100px] flex flex-col justify-center items-center">
+    <div className="m-[32px] tl:p-[100px] flex flex-col justify-center items-center">
       <div>
         <div className="flex tl:justify-center space-x-4">
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
@@ -129,7 +129,7 @@ export default function Login() {
         <div className="flex flex-col tl:flex-row tl:space-x-2 text-[16px]  justify-center items-center">
         <p className='text-[#737373]' > Don’t have an account?</p>
         <Link href='/register'>
-        <p className="text-[#633CFF]"> Create account </p>
+        <p className="text-[#633CFF] mb-[100px]"> Create account </p>
         </Link>
         </div>
        </div>

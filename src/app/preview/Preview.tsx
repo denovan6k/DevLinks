@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Icon } from '@iconify/react'
 import { useRouter } from "next/navigation";
 import Image from 'next/image'
-import img1 from  './Ellipse.png'
+
 import user from '../(mobile)/linkdata/data'
 import db from "../../lib/firestore"
 import { collection, getDocs,query, where } from "firebase/firestore"
@@ -14,6 +14,8 @@ import { imagedb } from '../../../firebase'
 import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "firebase/storage";
 import {  getMetadata } from 'firebase/storage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Empty from '../Selected';
+import img1 from '../assets/image-removebg-preview.png';
 interface props{
   className?:string
 }
@@ -115,12 +117,17 @@ const handleShareProfile = () => {
     
   return (
     <>
-  
+            {items.length === 0 && <div className='flex flex-col justify-center items-center'>
+              <div>
+              <Empty/>
+              </div>
+             
+            </div> }
 
-     <div className='px-[24px] flex flex-col justify-center items-center mx-auto'>
+           {items.length > 0 &&  <div className='px-[24px] flex flex-col justify-center items-center mx-auto'>
        <div className='flex items-center py-[16px] gap-[16px] tl:min-w-[600px] lp:min-w-[1000px] tl:justify-between'>
         <Link href='/'>
-          <Button className='max-w-[160px] text-[#633CFF]  border-[#633CFF] rounded-lg'>
+          <Button className='max-w-[160px] text-[#633CFF]  border-[#633CFF] rounded-lg hover:bg-[#EFEBFF] bg-white border-2'>
             Back to Editor
           </Button>
           </Link>
@@ -134,7 +141,7 @@ const handleShareProfile = () => {
        <div className='min-w-[237px] flex flex-col items-center mt-[56px] border p-[20px] rounded-2xl shadow-lg shadow-purple-200'>
        <div className="relative w-32 h-32">
       <Image
-        src={imgUrl}
+        src={imgUrl? imgUrl:img1}
         alt=""
         layout="fill"
         objectFit="cover"
@@ -165,7 +172,8 @@ const handleShareProfile = () => {
              
        </div>
 
-     </div>
+     </div>}
+    
     </>
   )
 }

@@ -14,7 +14,7 @@ import {v4} from 'uuid'
 import { useRouter } from 'next/navigation'
 import { url } from 'inspector'
 import MobileLayout from '@/app/MobileLayout'
-
+import img1 from '../assets/image-removebg-preview.png'
 import {  getMetadata } from 'firebase/storage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 interface ProfileProps {
@@ -176,7 +176,7 @@ const fetchImages = async (userId: string) => {
                         <div className="relative flex justify-center items-center"> 
                           
                         <Image
-                          src={imgUrl} // URL or data URL of the image
+                          src={imgUrl? imgUrl:img1} // URL or data URL of the image
                           alt="" // Add a descriptive alt text
                           className="rounded-xl" // Apply your custom styles
                           width={0} // Width of the image
