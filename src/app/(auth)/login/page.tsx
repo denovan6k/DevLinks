@@ -72,7 +72,7 @@ export default function Login() {
     }
   }
   return (
-    <div className="m-[32px] tl:p-[100px] flex flex-col justify-center items-center">
+    <div className="p-[32px] tl:p-[100px] flex flex-col justify-center items-center">
       <div>
         <div className="flex tl:justify-center space-x-4">
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
