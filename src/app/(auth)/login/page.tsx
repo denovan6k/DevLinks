@@ -11,12 +11,14 @@ import { app } from "../../../../firebase";
 import { useRouter } from "next/navigation";
 import {Icon} from "@iconify/react";
 import Link from "next/link";
+import { useToast } from "@/components/ui/use-toast"
 const formSchema = z.object({
   emailAddress: z.string().email(),
   password: z.string().min(8),
 });
 
 export default function Login() {
+  const { toast } = useToast()
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,7 +48,20 @@ export default function Login() {
 
       if (response.ok) {
         // Successful login, route to the homepage
-        router.push("/");
+        router.push("/")
+        toast({      
+          action: (
+            <div className=" flex justify-center items-center">
+              <Icon icon='ph:seal-check' className="mr-2 text-green-600" />
+              <span className="first-letter:capitalize">
+                Login successfully
+              </span>
+            </div>
+          ),
+        })
+        
+        ;
+      
       } else {
         // Handle server response errors
         const result = await response.json();
@@ -126,10 +141,10 @@ export default function Login() {
             </form>
           </Form> 
           <div className="flex flex-col justify-center items-center">
-        <div className="flex flex-col tl:flex-row tl:space-x-2 text-[16px]  justify-center items-center">
+        <div className="flex flex-col tl:flex-row tl:space-x-2 text-[16px]  justify-center items-center mb-[100px]">
         <p className='text-[#737373]' > Don’t have an account?</p>
         <Link href='/register'>
-        <p className="text-[#633CFF] mb-[100px]"> Create account </p>
+        <p className="text-[#633CFF] "> Create account </p>
         </Link>
         </div>
        </div>

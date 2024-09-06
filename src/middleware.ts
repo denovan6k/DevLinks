@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authMiddleware, redirectToHome, redirectToLogin } from "next-firebase-auth-edge";
 import { clientConfig, serverConfig } from "../config";
 
-const PUBLIC_PATHS = ['/login', '/register', ];
+const PUBLIC_PATHS = ['/login', '/register',  ];
 
 export async function middleware(request: NextRequest) {
   try {
@@ -20,7 +20,9 @@ export async function middleware(request: NextRequest) {
       handleValidToken: async (data, headers) => {
         const { token, decodedToken } = data;
         const requestedPath = request.nextUrl.pathname;
-
+         
+        const userId = decodedToken.uid; // Get the userId from the decoded token
+        const BASE_PATHS = [ `/profile/${userId}`];
         // console.log(`✅ Token: ${token}`);
         // console.log(`✅ Decoded Token:`, decodedToken);
 
@@ -74,6 +76,7 @@ export const config = {
   matcher: [
     '/',
     '/profile',
+    '/preview',
     "/api/login",
     "/api/logout",
     "/((?!_next|static|public|.*\\..*|/login|/register|).*)", // Apply middleware to all pages except specified paths
