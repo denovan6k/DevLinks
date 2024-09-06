@@ -147,7 +147,7 @@ export default function FormUpdater() {
 
   return (
     <div className="p-4 flex flex-col justify-center items-center gap-4">
-      <Button className="border-2 border-purple-500 bg-[#ffff] text-purple-500 text-center px-[27px] py-[11px] tl:w-full" onClick={handleAddForm} size='lg'>
+      <Button className="border-2 border-purple-500 bg-[#ffff] text-purple-500 text-center px-[27px] py-[11px] tl:w-full hover:bg-[#EFEBFF]" onClick={handleAddForm} size='lg'>
         + Add new link
       </Button>
 

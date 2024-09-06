@@ -51,7 +51,7 @@ export default function Login() {
         router.push("/")
         toast({      
           action: (
-            <div className=" flex justify-center items-center">
+            <div className="flex justify-center items-center">
               <Icon icon='ph:seal-check' className="mr-2 text-green-600" />
               <span className="first-letter:capitalize">
                 Login successfully
