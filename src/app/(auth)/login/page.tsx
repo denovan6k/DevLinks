@@ -61,6 +61,7 @@ export default function Login() {
         // Handle server response errors
         const result = await response.json();
         console.error("Login failed:", result.error || "Failed to authenticate");
+        toast.error("An error occurred. Please try again.");
       }
     } catch (error) {
       console.error("Login failed:", error);
