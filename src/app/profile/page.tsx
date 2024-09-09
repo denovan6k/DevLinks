@@ -69,53 +69,62 @@ const fetchImages = async (userId: string) => {
   }
 };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const selectedFile = event.target.files[0];
-      setFile(selectedFile);
+const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  if (event.target.files) {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
 
-      if (selectedFile) {
-        setUploading(true);
-        // const newFileName = selectedFile.name + v4();
-        const storageRef = ref(imagedb, `images/${userId}/profile`);
+    if (selectedFile) {
+      setUploading(true);
+      const storageRef = ref(imagedb, `images/${userId}/profile`);
 
-        try {
-          // Upload new file
-          await uploadBytes(storageRef, selectedFile);
-          const url = await getDownloadURL(storageRef);
+      try {
+        // Upload new profile picture
+        await uploadBytes(storageRef, selectedFile);
+        const newImageUrl = await getDownloadURL(storageRef);
 
-          // Delete old profile picture if any
-          if (uploadedUrl) {
-            // const oldFileName = uploadedUrl.split('/').pop()?.split('?')[0];
-            const oldFileRef = ref(imagedb, `images/${userId}/profile`);
-            await deleteObject(oldFileRef);
+        // Check if there is an old profile picture to delete
+        if (uploadedUrl) {
+          // Assuming the old file path matches `images/${userId}/profile`
+          const oldFileRef = ref(imagedb, `images/${userId}/profile`);
+          try {
+            await deleteObject(oldFileRef); // Deleting old profile picture
+          } catch (deleteError) {
+            console.warn("Error deleting old profile picture:", deleteError);
           }
-
-          setUploadedUrl(url);
-          console.log("File Uploaded Successfully");
-          toast('Uploaded sucessfully', {
-            description: "Profile picture uploaded successfully",
-            icon: <Icon icon='ph:seal-check' className="mr-2 text-slate-700" />, // Icon component with styling
-           
-          })
-            router.push("/profile");
-        } catch (error:any ) {
-          console.error("Error uploading the file", error);
-          toast(`${error.message}`, {
-            description: "An error occured try again",
-            icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
-            action: {
-              label: 'Upload',
-              onClick: () => handleFileChange(event),
-            },
-          });
-        } finally {
-          setUploading(false);
-         // Redirect to preview page after upload
         }
+
+        // Update the new uploaded URL
+        setUploadedUrl(newImageUrl);
+        console.log("File Uploaded Successfully");
+
+        // Display success toast notification
+        toast('Uploaded successfully', {
+          description: "Profile picture uploaded successfully",
+          icon: <Icon icon="ph:seal-check" className="mr-2 text-slate-700" />, // Custom success icon
+        });
+
+        // Redirect to the profile page
+        router.push("/profile");
+      } catch (error: any) {
+        console.error("Error uploading the file", error);
+
+        // Display error toast notification
+        toast(`${error.message}`, {
+          description: "An error occurred. Please try again.",
+          icon: <Icon icon="material-symbols:warning" className="mr-2 text-red-600" />, // Custom error icon
+          action: {
+            label: 'Retry',
+            onClick: () => handleFileChange(event), // Retry upload on button click
+          },
+        });
+      } finally {
+        setUploading(false);
       }
     }
-  };
+  }
+};
+
     
 
    
