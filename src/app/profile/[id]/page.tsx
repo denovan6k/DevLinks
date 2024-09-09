@@ -102,7 +102,8 @@ const Preview = () => {
         </div>
         <div className='mt-[56px]'>
           {items.map((option, index) => (
-            <Link href={option.link || ''} key={index}>
+           <Link href={option.link || '#'} key={index} passHref  target={option.link?.startsWith('http') ? '_blank' : '_self'} 
+           rel="noopener noreferrer">
               <Button key={index} className='min-w-[237px] mb-[20px] flex justify-between p-[16px]' style={{ backgroundColor: option.color || '#fff' }}>
                 <div className='flex items-center gap-2'>
                   <Icon icon={option.icon} />
