@@ -63,16 +63,37 @@ export default function Login() {
         console.error("Login failed:", result.error || "Failed to authenticate");
         toast.error("An error occurred. Please try again.");
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error("Login failed:", error);
-      toast('Login Failed', {
-        description: "Incorrect email or password",
-        icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
-        action: {
-          label: 'Create Account',
-          onClick: () => router.push('/register'),
-        },
-      });
+      if (error.code === 'auth/user-not-found') {
+        toast('User not found', {
+          description: "Create an account",
+          icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
+          action: {
+            label: 'Create Account',
+            onClick: () => router.push('/register'),
+          },
+        });
+      } else if (error.code === 'auth/wrong-password') {
+        toast('Wrong password ', {
+          description: "try again invalid credential",
+          icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
+          action: {
+            label: 'Forgot Password',
+            onClick: () => router.push('/register'),
+          },
+        });
+      } else {
+        toast(`${error.message}`, {
+          description: "An error occured try again",
+          icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
+          action: {
+            label: 'Create account',
+            onClick: () => router.push('/register'),
+          },
+        });
+      }
+      
 
     }
   }
