@@ -74,7 +74,7 @@ export default function Login() {
             onClick: () => router.push('/register'),
           },
         });
-      } else if (error.code === 'auth/wrong-password') {
+      } else if (error.code === 'auth/invalid-credential') {
         toast('Wrong password ', {
           description: "try again invalid credential",
           icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
@@ -96,6 +96,7 @@ export default function Login() {
       
 
     }
+  
   }
   return (
     <div className="p-[32px] tl:p-[100px] flex flex-col justify-center items-center">
