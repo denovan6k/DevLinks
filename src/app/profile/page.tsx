@@ -17,6 +17,7 @@ import MobileLayout from '@/app/MobileLayout'
 import img1 from '../assets/image-removebg-preview.png'
 import {  getMetadata } from 'firebase/storage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { toast } from "sonner"
 interface ProfileProps {
   imgUrls?:string
 }
@@ -92,9 +93,22 @@ const fetchImages = async (userId: string) => {
 
           setUploadedUrl(url);
           console.log("File Uploaded Successfully");
+          toast('Uploaded sucessfully', {
+            description: "Profile picture uploaded successfully",
+            icon: <Icon icon='ph:seal-check' className="mr-2 text-slate-700" />, // Icon component with styling
+           
+          })
             router.push("/profile");
-        } catch (error) {
+        } catch (error:any ) {
           console.error("Error uploading the file", error);
+          toast(`${error.message}`, {
+            description: "An error occured try again",
+            icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
+            action: {
+              label: 'Upload',
+              onClick: () => handleFileChange(event),
+            },
+          });
         } finally {
           setUploading(false);
          // Redirect to preview page after upload
