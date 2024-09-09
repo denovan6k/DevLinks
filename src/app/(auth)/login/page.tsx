@@ -75,8 +75,8 @@ export default function Login() {
           },
         });
       } else if (error.code === 'auth/invalid-credential') {
-        toast('Wrong password ', {
-          description: "try again invalid credential",
+        toast('Invalid password or email ', {
+          description: "Try again, invalid credential",
           icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />, // Icon component with styling
           action: {
             label: 'Forgot Password',
