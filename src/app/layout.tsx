@@ -7,7 +7,7 @@ import { DropdownProvider } from "./context/dropdowncontext";
 const inter = Inter({ subsets: ["latin"] });
 
 import { Inter as FontSans } from "next/font/google"
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/sonner"
 
 import { cn } from "@/lib/utils"
  

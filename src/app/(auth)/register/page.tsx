@@ -24,7 +24,7 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app } from "../../../../firebase";
 import { useRouter } from "next/navigation";
 import { Icon } from '@iconify/react';
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 
 
 const formSchema = z
@@ -43,7 +43,7 @@ const formSchema = z
   )
 
 export default function Register() {
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -66,18 +66,41 @@ export default function Register() {
     try {
       await createUserWithEmailAndPassword(getAuth(app), form.emailAddress, form.password);
       router.push("/login");
-      toast({      
-        action: (
-          <div className="max-w-[300px] flex justify-center items-center">
-            <Icon icon='ph:seal-check' className="mr-2 text-green-600" />
-            <span className="first-letter:capitalize">
-              Created Account successfully
-            </span>
-          </div>
-        ),
-      }) //come back to login page after successful registration
-    } catch (e) {
-      console.log(e as Error);
+      // toast({      
+      //   action: (
+      //     <div className="max-w-[300px] flex justify-center items-center">
+      //       <Icon icon='ph:seal-check' className="mr-2 text-green-600" />
+      //       <span className="first-letter:capitalize">
+      //         Created Account successfully
+      //       </span>
+      //     </div>
+      //   ),
+      // })
+      
+      toast('Created Account', {
+        description: "Account Created Successfully",
+        icon: <Icon icon='ph:seal-check' className="mr-2 text-green-600" />, // Icon component with styling
+       
+      });//come back to login page after successful registration
+    } catch (error:any) {
+     
+        if (error.code === "auth/email-already-in-use") {
+          toast('Email already in use', {
+            description: "Email already exists. Try another one.",
+            icon: <Icon icon='material-symbols:warning' className="mr-2 text-red-600" />,
+             // Icon component with styling
+            action: {
+              label: 'Create Account',
+              onClick: () => router.push('/register'),
+            },
+          });
+           // Sonner toast for error
+        } else {
+          toast.error("An error occurred. Please try again.");
+        }
+
+      console.log(error as Error);
+      
       
     }
   }
