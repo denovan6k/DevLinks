@@ -47,3 +47,15 @@ npm run dev
 # or
 yarn dev
 ```
+
+## This App is using ShadCN component UI Library
+
+# Run the init command to create a new Next.js project or to setup an existing one:
+
+```bash
+npx shadcn@latest init
+```
+
+# to add components to your project
+[ShadCN Documentation](https://ui.shadcn.com/docs/components/button)
+
