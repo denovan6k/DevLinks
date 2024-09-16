@@ -150,8 +150,8 @@ export default function FormUpdater() {
       <Button className="border-2 border-purple-500 bg-[#ffff] text-purple-500 text-center px-[27px] py-[11px] tl:w-full hover:bg-[#EFEBFF]" onClick={handleAddForm} size='lg'>
         + Add new link
       </Button>
-
-      {items.length === 0 && <Empty />}
+  
+      {items.length === 0 && <Empty />}  
       <div className="w-full">
         {items.map((form: any, index: any) => (
           <Card key={index} className="mb-4 p-[20px] rounded-lg flex flex-col ">
@@ -208,6 +208,7 @@ export default function FormUpdater() {
         </Button>}
        
       </div>
+     
     </div>
   );
 }

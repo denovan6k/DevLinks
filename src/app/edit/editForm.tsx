@@ -162,7 +162,7 @@ export default function EditForm() {
                   <div className="tl:flex tl:items-center tl:justify-between">
                   <FormLabel>First name*</FormLabel>
                   <FormControl>
-                    <Input placeholder= {forms[0]?.firstName || 'john'} type="text" {...field} className="tl:w-[344px]" />
+                    <Input placeholder= {forms[0]?.firstName || 'john'} type="text" {...field} className="tl:w-[344px] focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0" />
                   </FormControl>
                   </div>            
                   <FormMessage />
@@ -183,7 +183,7 @@ export default function EditForm() {
                       placeholder= {forms[0]?.lastName || 'doe'}
                       type="text"
                       {...field}
-                      className="tl:w-[344px]" />
+                      className="tl:w-[344px] focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0" />
                   </FormControl>
                   </div>
                   <FormMessage />
@@ -204,7 +204,7 @@ export default function EditForm() {
                       placeholder= {forms[0]?.emailAddress || "johndoe@gmail.com"}
                       type="email"
                       {...field}
-                      className="tl:w-[344px]" />
+                      className="tl:w-[344px] focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0" />
                   </FormControl>
                   </div>
                   <FormMessage />

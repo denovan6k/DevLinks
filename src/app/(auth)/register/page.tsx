@@ -151,7 +151,7 @@ export default function Register() {
                      
                      
                      
-                      <Input placeholder="e.g. alex@example.com" type="email" {...field} className="min-w-[311px] tl:min-w-[396px] px-8 py-  border-2 text-sm rounded-lg" />
+                      <Input placeholder="e.g. alex@example.com" type="email" {...field} className="min-w-[311px] tl:min-w-[396px] px-8 py-  border-2 text-sm rounded-lg focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0" />
                     
                       </div>
                   </FormControl>
@@ -171,7 +171,7 @@ export default function Register() {
                     <Input
                       placeholder="*******"
                       type="password"
-                      className={`min-w-[311px] tl:min-w-[396px] px-3 py-2 border-2 text-sm rounded-lg`}
+                      className={`min-w-[311px] tl:min-w-[396px] px-3 py-2 border-2 text-sm rounded-lg focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0`}
                       {...field}
                     />
                   </FormControl>
@@ -191,7 +191,7 @@ export default function Register() {
                     <Input
                       placeholder="*******"
                       type="password"
-                      className={`min-w-[311px] tl:min-w-[396px] px-3 py-2 border-2 text-sm rounded-lg`}
+                      className={`min-w-[311px] tl:min-w-[396px] px-3 py-2 border-2 text-sm rounded-lg focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0`}
                       {...field}
 
                     />

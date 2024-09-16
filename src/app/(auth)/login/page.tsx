@@ -134,7 +134,7 @@ export default function Login() {
                      
                      
                      
-                      <Input placeholder="e.g. alex@example.com" type="email" {...field} className="min-w-[311px] tl:min-w-[396px] px-8 py-  border-2 text-sm rounded-lg" />
+                      <Input placeholder="e.g. alex@example.com" type="email" {...field} className="min-w-[311px] tl:min-w-[396px] px-8 py-  border-2 text-sm rounded-lg focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0" />
                     
                       </div>
                     
@@ -155,7 +155,7 @@ export default function Login() {
                         placeholder="*******"
                         type="password"
                         {...field}
-                        className="min-w-[311px] tl:min-w-[396px] px-3 py-2 border-2 text-sm rounded-lg"
+                        className="min-w-[311px] tl:min-w-[396px] px-3 py-2 border-2 text-sm rounded-lg focus:border-[#633CFF] focus:shadow-[#633cff3f] focus:shadow-lg focus:border-2 focus:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
