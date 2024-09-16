@@ -27,6 +27,8 @@ import { useRouter } from "next/navigation";
 import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "firebase/storage";
 import {  getMetadata } from 'firebase/storage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { toast } from "sonner"
+import { Icon } from "@iconify/react/dist/iconify.js";
 type Item = {
     id: string;
     color?: string;
@@ -137,6 +139,11 @@ export default function EditForm() {
       }
 
       router.push("/preview");
+      toast('Credentials Added', {
+        description: "Credentials added Successfully",
+        icon: <Icon icon='ph:seal-check' className="mr-2 text-green-600" />, // Icon component with styling
+       
+      });
     } catch (e) {
       console.error("Error saving document: ", e);
     }

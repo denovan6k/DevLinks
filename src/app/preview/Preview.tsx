@@ -140,6 +140,8 @@ const handleShareProfile = () => {
        </div>
        <div className='min-w-[237px] flex flex-col items-center mt-[56px] border p-[20px] rounded-2xl shadow-lg shadow-purple-200'>
        <div className="relative w-32 h-32">
+
+        
       <Image
         src={imgUrl? imgUrl:img1}
         alt=""

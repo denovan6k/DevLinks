@@ -7,7 +7,7 @@ import Image from 'next/image'
 import img1 from  './Ellipse.png'
 import user from '../../(mobile)/linkdata/data'
 import db from "../../../lib/firestore"
-import { collection, getDocs,query, where } from "firebase/firestore"
+import { collection, getDocs,query, where,onSnapshot } from "firebase/firestore"
 import Loading from '@/app/preview/Load'
 import Link from 'next/link'
 import { imagedb } from '../../../../firebase'
@@ -75,26 +75,67 @@ const fetchImages = async (userId: string) => {
 };
 
 
-const fetchItems = async (userId: string) => {
+// const fetchItems = async (userId: string) => {
+//   try {
+//     setLoading(true);
+
+//     // Fetch user-specific documents from Firestore (items and form collections)
+//     const [itemsSnapshot, formSnapshot] = await Promise.all([
+//       getDocs(collection(db, `users/${userId}/items`)), // Fetch items where userId matches the current user's UID
+//       getDocs(collection(db, `users/${userId}/forms`)), // Fetch form data for the user
+//     ]);
+
+//     // Optional delay for loading simulation
+//     const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+//     await delay(1000);
+
+//     setItems(itemsSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+//     setForm(formSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//   } finally {
+//     setLoading(false); // Ensure loading is stopped
+//   }
+// };
+const fetchItems = (userId: string) => {
+  // Optional delay for loading simulation
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
   try {
     setLoading(true);
 
-    // Fetch user-specific documents from Firestore (items and form collections)
-    const [itemsSnapshot, formSnapshot] = await Promise.all([
-      getDocs(collection(db, `users/${userId}/items`)), // Fetch items where userId matches the current user's UID
-      getDocs(collection(db, `users/${userId}/forms`)), // Fetch form data for the user
-    ]);
+    // Real-time listener for user-specific items and forms
+    const itemsUnsubscribe = onSnapshot(
+      collection(db, `users/${userId}/items`),
+      async (itemsSnapshot) => {
+        await delay(1000); // Simulated delay (if needed)
+        setItems(itemsSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+      },
+      (error) => {
+        console.error('Error fetching items:', error);
+      }
+    );
 
-    // Optional delay for loading simulation
-    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-    await delay(1000);
+    const formsUnsubscribe = onSnapshot(
+      collection(db, `users/${userId}/forms`),
+      async (formSnapshot) => {
+        await delay(1000); // Simulated delay (if needed)
+        setForm(formSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+      },
+      (error) => {
+        console.error('Error fetching forms:', error);
+      }
+    );
 
-    setItems(itemsSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
-    setForm(formSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Item)));
+    return () => {
+      // Unsubscribe from real-time listeners when the component unmounts or you no longer need it
+      itemsUnsubscribe();
+      formsUnsubscribe();
+    };
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
-    setLoading(false); // Ensure loading is stopped
+    setLoading(false); // Ensure loading is stopped after initial fetch
   }
 };
 

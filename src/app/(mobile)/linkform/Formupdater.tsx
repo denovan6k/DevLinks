@@ -14,7 +14,7 @@ import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } 
 import Empty from "../empty";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
-
+import { toast } from "sonner"
 // Item interface
 interface Item {
   id?: string;
@@ -73,6 +73,7 @@ export default function FormUpdater() {
       try {
         await deleteDoc(doc(db, `users/${userId}/items`, id)); // Delete the document from Firestore
         console.log("Document deleted with ID: ", id);
+        router.push("/");
       } catch (e) {
         console.error("Error deleting document: ", e);
       }
@@ -138,7 +139,13 @@ export default function FormUpdater() {
           });
           console.log("Document written with ID: ", docRef.id);
         }
+       
         router.push("/profile");
+        toast('Link Added', {
+          description: "Link added Successfully",
+          icon: <Icon icon='ph:seal-check' className="mr-2 text-green-600" />, // Icon component with styling
+         
+        });
       } catch (e) {
         console.error("Error saving document: ", e);
       }
