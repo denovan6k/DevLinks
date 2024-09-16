@@ -219,7 +219,7 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
                           
                           <button  disabled={uploading} className='flex flex-col justify-center items-center'>
                             <Icon icon='ph:image' className='text-[40px]'/>
-                            <p> + Upload Image</p>
+                            <p> {imgUrl?"Change image":"+ Upload Image"}</p>
                             </button>  
                             <Input type="file" onChange={handleFileChange} style={{display: 'none'}} id='fileInput'/> 
                           </div>
